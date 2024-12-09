@@ -101,26 +101,14 @@ export default async function Bb() {
                                         Contact Us
                                     </p>
                                 </Link>
-                                <Link href="#">
-                                    <p className="   hover:text-white cursor-pointer">
-                                        Annonce
-                                    </p>
-                                </Link>
-                                <Link href="#">
-                                    <p className="   hover:text-white cursor-pointer">
-                                        Services
-                                    </p>
-                                </Link>
+                               
+                                
                                 <Link href="/blog">
                                     <p className="   hover:text-white cursor-pointer">
                                         Blogs
                                     </p>
                                 </Link>
-                                <Link href="/">
-                                    <p className="   hover:text-white cursor-pointer">
-                                        devenez vendeur
-                                    </p>
-                                </Link>                                
+                                                           
                             </div>
                         </div>
                         <div className='flex flex-col mb-6 max-md:mb-9 gap-4 '>

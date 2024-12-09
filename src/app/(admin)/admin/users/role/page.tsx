@@ -179,7 +179,7 @@ const Page = () => {
             <tr className="bg-gray-800">
               <th className="border border-gray-300 px-6 py-3">Role Name</th>
               {pages.map((page) => (
-                <th key={page} className="border border-gray-300 px-6 py-3">
+                <th key={page} className="border border-gray-300 px-1 py-3">
                   {page}
                 </th>
               ))}
