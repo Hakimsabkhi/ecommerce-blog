@@ -1,4 +1,4 @@
-export type Page = 'Brands' | 'Categories' | 'Products' | 'Promation' | 'Reviews' | 'Orders' | 'Invoice' | 'Revenue' ;
+export type Page = 'Brands' | 'Categories' | 'Products' | 'Promation' | 'Reviews' | 'Orders' | 'Invoice' | 'Revenue' | 'Blog' | 'Blog Comment';
 
 export const pages: Page[] = [
   'Brands', 
@@ -9,6 +9,8 @@ export const pages: Page[] = [
   'Orders', 
   'Invoice', 
   'Revenue', 
+  'Blog', 
+  'Blog Comment', 
 
 ];
 
