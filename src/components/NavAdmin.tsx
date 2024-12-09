@@ -70,11 +70,12 @@ const NavAdmin = () => {
            
           </div>
           <div className="hidden md:flex md:items-center">
-                        <div className="ml-10 flex items-baseline space-x-4">
+                        <div className="ml-4 flex items-center ">
             {filteredNavigationItems.map((item) => (<Link key={item.name} href={item.path}>
                 <p
                   onClick={() => handleClick(item.name)}
-                  className={`text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium cursor-pointer ${
+                  className={`text-gray-300 hover:bg-gray-700 hover:text-white 
+                               p-3 rounded-md text-sm font-medium cursor-pointer ${
                     activeLink === item.name ? 'bg-gray-700' : ''
                   }`}
                 >

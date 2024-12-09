@@ -6,6 +6,8 @@ import { toast } from "react-toastify";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Pagination from "@/components/Pagination";
 import DeletePopup from "@/components/Popup/DeletePopup";
+import { FaSpinner } from "react-icons/fa6";
+import { FaTrashAlt } from "react-icons/fa";
 
 
 
@@ -141,13 +143,7 @@ const AddedCategories: React.FC = () => {
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
-  if (loading) {
-    return (
-      /* loading start */
-     <LoadingSpinner/>
-      /*  loading end  */
-    );
-  }
+  
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -157,7 +153,7 @@ const AddedCategories: React.FC = () => {
     <div className="mx-auto w-[90%] py-8 flex flex-col gap-8">
       <div className="flex items-center justify-between">
         <p className="text-3xl font-bold">ALL categories</p>
-        <div className="grid grid-cols-2">
+        <div className="flex gap-2">
         <Link href="/admin/blog" >
           <button className="bg-gray-800 font-bold hover:bg-gray-600 text-white rounded-lg  pl-10 pr-10  h-10">
             Back
@@ -177,15 +173,37 @@ const AddedCategories: React.FC = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
         className="mt-4 p-2 border border-gray-300 rounded"
       />
-      <table className="table-auto w-full mt-4 uppercase">
+      <div className="max-2xl:h-80 h-[50vh]">
+      <table className="w-full rounded overflow-hidden table-fixed">
         <thead>
           <tr className="bg-gray-800 ">
             
-            <th className="px-4 py-2  ">Name</th>
-            <th className=" px-4 py-2"> Created By</th>
-            <th className="px-4 text-center py-2"> Action</th>
+            <th className="px-4 py-3  w-1/4">Name</th>
+            <th className=" px-4 py-3 w-1/4"> Created By</th>
+            <th className="px-4 text-center py-3"> Action</th>
           </tr>
         </thead>
+        {loading ? (
+          <tbody>
+            <tr>
+              <td colSpan={6}>
+                <div className="flex justify-center items-center h-full w-full py-6">
+                  <FaSpinner className="animate-spin text-[30px]" />
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        ) : filteredCategory.length === 0 ? (
+          <tbody>
+            <tr>
+              <td colSpan={6}>
+                <div className="text-center py-6 text-gray-600 w-full">
+                  <p>Aucun blog trouvé.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        ) : (
         <tbody>
           {currentCategories.map((item, index) => (
             <tr key={index} className="bg-white text-balck">
@@ -223,10 +241,10 @@ const AddedCategories: React.FC = () => {
                   </Link>
                   <button
                     onClick={() => handleDeleteClick(item)}
-                    className="bg-gray-800 text-white w-28 h-10 hover:bg-gray-600 rounded-md"
+                    className="bg-gray-800 text-white pl-3 w-10 h-10 hover:bg-gray-600 rounded-md"
                     disabled={loadingCategoryId === item._id}
                   >
-                    {loadingCategoryId ===item._id ? "Processing..." : "DELETE"}
+                    {loadingCategoryId ===item._id ? "Processing..." :<FaTrashAlt />}
                   </button>
                   {isPopupOpen && (
                     <DeletePopup
@@ -240,8 +258,8 @@ const AddedCategories: React.FC = () => {
               </td>
             </tr>
           ))}
-        </tbody>
-      </table>
+        </tbody>)}
+      </table></div>
       <div className="flex justify-center mt-4">
         
       <Pagination
