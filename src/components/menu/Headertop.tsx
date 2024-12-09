@@ -28,7 +28,7 @@ async function fetchCompanyData() {
     }
   );
   if (!res.ok) {
-    throw new Error("Failed to fetch data");
+    console.log("Failed to fetch data");
   }
   return res.json();
 }
@@ -42,10 +42,10 @@ const Headertop: React.FC = async () => {
 
   const formatPhoneNumber = (phone: string | number): string => {
     // Convert number to string if needed
-    const phoneStr = phone.toString().trim();
+    const phoneStr = phone?.toString().trim();
 
     // Format phone number as XX XXX XXX
-    if (phoneStr.length === 8) {
+    if (phoneStr?.length === 8) {
       return `${phoneStr.slice(0, 2)} ${phoneStr.slice(2, 5)} ${phoneStr.slice(
         5
       )}`;
