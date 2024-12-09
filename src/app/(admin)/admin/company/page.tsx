@@ -21,6 +21,7 @@ const Display: React.FC = () => {
   const [iconPreviewBanner, setIconPreviewBanner] = useState<string | null>(
     null
   );
+  const [iconPreviewcontacts, setIconPreviewBannerContacts] = useState<string | null>(null);
   const router = useRouter();
   const fetchCompanyData = async () => {
     try {
@@ -51,6 +52,9 @@ const Display: React.FC = () => {
       }
       if (data.imageUrl) {
         setIconPreviewBanner(data.imageUrl);
+      }
+      if (data.bannercontacts) {
+        setIconPreviewBannerContacts(data.bannercontacts);
       }
     } catch (error) {
       console.error("Error fetching company data:", error);
@@ -125,6 +129,20 @@ const Display: React.FC = () => {
             <div className="w-[15%] max-lg:w-full">
               <Image
                 src={iconPreviewBanner}
+                alt="Banner preview"
+                className="w-full h-auto mt-4"
+                width={50}
+                height={50}
+              />
+            </div>
+          )}
+        </div>
+        <div className="mb-4">
+          <p className="block text-lg font-bold">Upload Banner Contact</p>
+          {iconPreviewcontacts && (
+            <div className="w-[15%] max-lg:w-full">
+              <Image
+                src={iconPreviewcontacts}
                 alt="Banner preview"
                 className="w-full h-auto mt-4"
                 width={50}

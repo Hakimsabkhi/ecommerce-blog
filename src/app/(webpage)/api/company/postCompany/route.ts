@@ -43,6 +43,7 @@ export async function POST(req: NextRequest) {
       const instagram = formData.get('instagram') as string | null;
       const imageFile = formData.get('image') as File | null;
       const bannerFile = formData.get('banner') as File | null;
+      const bannerFilecontacts = formData.get('bannercontacts') as File | null;
       if (!name||!address||!city||!governorate||!zipcode||!phone||!email ) {
         return NextResponse.json({ message: 'Name , Addres , City , Governorate , Zipcode And Phone is required' }, { status: 400 });
       }
@@ -104,10 +105,33 @@ export async function POST(req: NextRequest) {
         imageUrl = result.secure_url; // Extract the secure_url from the result
       }
   
-    
+      let bannercontacts = '';
+      if (bannerFilecontacts) {
+        const imageBuffer = await bannerFilecontacts.arrayBuffer();
+        const bufferStream = new stream.PassThrough();
+        bufferStream.end(Buffer.from(imageBuffer));
+  
+        const result = await new Promise<any>((resolve, reject) => {
+          const uploadStream = cloudinary.uploader.upload_stream(
+            { folder: 'company',
+              format: 'webp' 
+             },
+            (error, result) => {
+              if (error) {
+                return reject(error);
+              }
+              resolve(result);
+            }
+          );
+  
+          bufferStream.pipe(uploadStream);
+        });
+  
+        bannercontacts = result.secure_url; // Extract the secure_url from the result
+      }
      
 
-      const newCompany = new Company({ name, governorate,city,address,zipcode ,email,logoUrl,imageUrl,phone,facebook,linkedin,instagram,user });
+      const newCompany = new Company({ name, governorate,city,address,zipcode ,email,logoUrl,imageUrl,bannercontacts,phone,facebook,linkedin,instagram,user });
       await newCompany.save();
       return NextResponse.json(newCompany, { status: 201 });
     } catch (error) {

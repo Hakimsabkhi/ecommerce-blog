@@ -48,7 +48,7 @@ export async function PUT( req: NextRequest ){
       const instagram = formData.get('instagram') as string | null;
       const imageFile = formData.get('image') as File | null;
       const bannerFile = formData.get('banner') as File | null;
-  
+      const bannerFilecontacts = formData.get('bannercontacts') as File | null;
       if (!id) {
         return NextResponse.json(
           { message: "id is required" },
@@ -137,7 +137,42 @@ export async function PUT( req: NextRequest ){
         existingCompany.imageUrl = imageUrl;
       }
      
+      let bannercontacts = existingCompany.bannercontacts;
    
+  
+      // Handle image file upload and deletion of the old image
+      if (bannerFilecontacts) {
+        if (existingCompany.bannercontacts) {
+          const publicId = extractPublicId(existingCompany.bannercontacts);
+          if (publicId) {
+            await cloudinary.uploader.destroy(`company/${publicId}`);
+            
+          }
+        }
+  
+        const imageBuffer = Buffer.from(await bannerFilecontacts.arrayBuffer());
+        const imageStream = new stream.PassThrough();
+        imageStream.end(imageBuffer);
+  
+        const { secure_url: newImageUrl } = await new Promise<any>(
+          (resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream(
+              { folder: "company",
+                format: 'webp' 
+               },
+              (error, result) => {
+                if (error) return reject(new Error(`Image upload failed: ${error.message}`));
+                resolve(result);
+              }
+            );
+            imageStream.pipe(uploadStream);
+          }
+        );
+  
+        bannercontacts = newImageUrl; // Update imageUrl with the uploaded URL
+        existingCompany.bannercontacts = bannercontacts;
+      }
+     
     
       // Update company with new values if provided
       if (name !== null) existingCompany.name = name;
