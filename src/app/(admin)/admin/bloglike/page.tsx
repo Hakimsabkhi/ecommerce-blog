@@ -110,25 +110,26 @@ const BlogLikes = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
         className="mt-4 p-2 border border-gray-300 rounded"
       />
-      <table className="table-auto w-full mt-4 uppercase">
+      <div className="max-2xl:h-80 h-[50vh]">
+      <table className="w-full rounded overflow-hidden table-fixed">
         <thead>
           <tr className="bg-gray-800">
-            <th className="px-4 py-2">Title</th>
-            <th className="px-4 py-2">Category</th>
-            <th className="px-4 py-2">ImageURL</th>
+            <th className="px-4 py-3">Title</th>
+            <th className="px-4 py-3">Category</th>
+            <th className="px-4 py-3">ImageURL</th>
 
-            <th className="px-4 py-2">Author</th>
+            <th className="px-4 py-3">Author</th>
            
-            <th className="px-4 py-2 text-center">Action</th>
+            <th className="px-4 py-3 text-center">Action</th>
           </tr>
         </thead>
         <tbody>
           {currentBlogs.map((blog) => (
             <tr key={blog._id} className="bg-white text-black">
-              <td className="border px-4 py-2">{blog.title}</td>
+              <td className="border px-4 py-2">{blog.title.slice(0, 19)}</td>
               <td className="border px-4 py-2">{blog.blogCategory?.name}</td>
               <td className="border px-4 py-2">
-                <div className="bg-gray-200 border-2 border-dashed rounded-xl w-full h-[100px] relative">
+                <div className="bg-gray-200 border-2 border-dashed rounded-xl w-full h-[40px] relative">
                   {" "}
                   {/* Set a desired height for the div */}
                   <Link href={blog.imageUrl}>
@@ -138,7 +139,7 @@ const BlogLikes = () => {
                       quality={100}
                       layout="fill" // Makes image fill the container
                       objectFit="cover" // Ensures image covers the div without stretching/distorting
-                      className="rounded-xl" // Optional: rounded corners on the image
+                      // Optional: rounded corners on the image
                     />
                   </Link>
                 </div>
@@ -146,17 +147,19 @@ const BlogLikes = () => {
 
               <td className="border px-4 py-2">{blog?.user?.username}</td>
 
-              <td className="border px-4 py-2">
-                <div className="flex items-center justify-center gap-2">
-                    <Link href={`/admin/bloglike/${blog._id}`} className="bg-gray-600 p-6 rounded-md text-white hover:bg-gray-500">
-                            {blog.numbercomment} Comments
+              <td className="border px-4 py-2 flex justify-center">
+                <div>
+                    <Link href={`/admin/bloglike/${blog._id}`}>
+                           <button className="bg-gray-800 text-white w-32 h-10  hover:bg-gray-600 rounded-md uppercase">
+                         {blog.numbercomment} Comments
+                      </button>
                     </Link>
                 </div>
               </td>
             </tr>
           ))}
         </tbody>
-      </table>
+      </table></div>
       <div className="flex justify-center mt-4">
         <Pagination
           currentPage={currentPage}
