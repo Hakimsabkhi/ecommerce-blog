@@ -1,9 +1,9 @@
 "use client";
-import { comment } from "@/assets/image";
+import React, { useState, useEffect, useMemo } from "react";
 import Pagination from "@/components/Pagination";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState, useEffect, useMemo } from "react";
+
 
 interface Postsecondsubsection {
   secondtitle: string;
@@ -54,7 +54,7 @@ interface User {
   username: string;
   email: string;
 }
-const page = () => {
+const BlogLikes = () => {
   const [postlist, setPostlist] = useState<blog[]>([]);
 
  
@@ -168,4 +168,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default BlogLikes;
