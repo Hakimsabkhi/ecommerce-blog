@@ -39,7 +39,7 @@ interface Address {
         next:{revalidate:0},
       });
     if (!res.ok) {
-        throw new Error('Failed to fetch data');
+       console.log('Failed to fetch data');
     }
     return res.json();
 }
@@ -52,10 +52,10 @@ export default async function Bb() {
     const companyData = await fetchCompanyData();
     const formatPhoneNumber = (phone: string | number): string => {
         // Convert number to string if needed
-        const phoneStr = phone.toString().trim();
+        const phoneStr = phone?.toString().trim();
       
         // Check if the length of the phone number is correct
-        if (phoneStr.length === 8) {
+        if (phoneStr?.length === 8) {
           return `${phoneStr.slice(0, 2)} ${phoneStr.slice(2, 5)} ${phoneStr.slice(5)}`;
         }
       
