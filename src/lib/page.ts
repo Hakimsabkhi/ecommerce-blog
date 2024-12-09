@@ -24,6 +24,8 @@ export  const pageUrls = [
     { name: 'Invoice', path: '/admin/invoice' },
     { name: 'Company', path: '/admin/company' },
     { name: 'Revenue', path: '/admin/revenue' },
-    { name: 'Role', path: '/admin/users/role' }
+    { name: 'Role', path: '/admin/users/role' },
+    { name: 'Blog', path: '/admin/blog' },
+    { name: 'Blog Comment', path: '/admin/bloglike' }
   ];
   
