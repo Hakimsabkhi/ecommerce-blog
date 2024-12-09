@@ -196,7 +196,7 @@ const Blogcomment:React.FC<Blogcommentprops> = ({ blog })=>{
                             <p className='text-4xl max-md:text-xl '>{totalcomment} comments</p>
                             
                         </div>
-                        {comments.map((comment) => (        <div className="flex flex-col gap-3">
+                        {comments.map((comment) => (        <div key={comment._id} className="flex flex-col gap-3">
                             <div className='flex flex-col gap-1'>
                                 <p className='text-xl font-bold'>{comment.user.username}</p>
                                 <p className='text-sm text-gray-400'>              {timeAgo(comment.createdAt)}
