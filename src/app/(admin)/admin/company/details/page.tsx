@@ -23,6 +23,8 @@ function CreateCompany() {
   const [iconPreview, setIconPreview] = useState<string | null>(null);
   const [iconFile, setIconFile] = useState<File | null>(null);
   const [iconPreviewBanner, setIconPreviewBanner] = useState<string | null>(null);
+   const [iconPreviewcontacts, setIconPreviewBannerContacts] = useState<string | null>(null);
+   const [bannerFileContacts, setBannerFileContacts] = useState<File | null>(null);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const router=useRouter(); 
   const handleIconChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,6 +39,13 @@ function CreateCompany() {
     if (file) {
       setBannerFile(file); // Correct state variable for banner
       setIconPreviewBanner(URL.createObjectURL(file));
+    }
+  };
+  const handleBannerContactsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setBannerFileContacts(file);
+      setIconPreviewBannerContacts(URL.createObjectURL(file));
     }
   };
   const fetchCompanyData =  async () => {
@@ -69,6 +78,9 @@ function CreateCompany() {
       }
       if (data.imageUrl) {
         setIconPreviewBanner(data.imageUrl);
+      }
+      if (data.bannercontacts) {
+        setIconPreviewBannerContacts(data.bannercontacts);
       }
     } catch (error) {
       console.error('Error fetching company data:', error);
@@ -103,6 +115,9 @@ function CreateCompany() {
     }
     if (bannerFile) {
       formData.append('banner', bannerFile);
+    }
+    if (bannerFileContacts) {
+      formData.append('bannercontacts', bannerFileContacts);
     }
     try {
       const response = await fetch('/api/company/postCompany', {
@@ -145,6 +160,9 @@ function CreateCompany() {
     }
     if (bannerFile) {
       formData.append('banner', bannerFile);
+    }
+    if (bannerFileContacts) {
+      formData.append('bannercontacts', bannerFileContacts);
     }
     try {
       const response = await fetch('/api/company/updateCompany', {
@@ -297,12 +315,40 @@ function CreateCompany() {
                   src={iconPreviewBanner}
                   alt="Banner preview"
                   className="w-full h-auto mt-4"
-                  width={50}
-                  height={50}
+                  width={100}
+                  height={100}
                 />
               </div>
             )}
           </div>
+          <div className="mb-4">
+  <p className="block text-sm font-medium">Upload Banner Contacts*</p>
+  <input
+    type="file"
+    accept="image/*"
+    onChange={handleBannerContactsChange}
+    className="hidden"
+    id="upload-contacts" // Correct ID for the banner input
+  />
+  <label
+    htmlFor="upload-contacts" // Correctly references the banner input
+    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500"
+  >
+    Select a Banner Contacts
+  </label>
+  {iconPreviewcontacts && (
+    <div className="w-[15%] max-lg:w-full mt-4">
+      <Image
+        src={iconPreviewcontacts}
+        alt="Banner Contacts preview"
+        className="w-full h-auto"
+        width={100}
+        height={100}
+      />
+    </div>
+  )}
+</div>
+
           <div className="mb-4">
             <p className="block text-sm font-medium">Facebook</p>
             <input

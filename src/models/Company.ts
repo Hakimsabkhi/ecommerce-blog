@@ -10,6 +10,7 @@ export interface ICompany extends Document {
   governorate:string
   logoUrl?:string;
   imageUrl?:string;
+  bannercontacts:string;
   email:string;
   phone:number;
   facebook:string;
@@ -33,6 +34,7 @@ const CompanySchema: Schema = new Schema({
   instagram:{type: String},
   logoUrl: { type: String,required: true },
   imageUrl: { type: String,required: true },
+  bannercontacts:{ type: String,required: true },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 },{ timestamps: true });
 
