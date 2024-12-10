@@ -31,7 +31,7 @@ export async function GET(
    
     // Find products by the category ID
     const blog = await BlogMainSection.find({ blogCategory: foundCategory._id ,vadmin: "not-approve"}).populate('blogCategory' , 'slug').exec();
-    console.log(blog)
+   
     return NextResponse.json(blog, { status: 200 });
   } catch (error) {
     console.error(error);
