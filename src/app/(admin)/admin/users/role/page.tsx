@@ -19,9 +19,8 @@ const Page = () => {
   const [selectedRole, setSelectedRole] = useState({ id: "", name: "" });
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-
   const is2xl = useIs2xl();
-  const usersPerPage =is2xl ? 8 : 5;
+  const usersPerPage = is2xl ? 8 : 5;
 
   const currentUser = useMemo(() => {
     const indexOfLastUser = currentPage * usersPerPage;
@@ -113,7 +112,6 @@ const Page = () => {
     }
   }
 
-
   async function handleAddRole() {
     if (!newRole.trim()) {
       alert("Role name cannot be empty.");
@@ -154,11 +152,10 @@ const Page = () => {
       <div className="flex items-center ">
         <h1 className="text-3xl font-bold">Roles</h1>
       </div>
-      
 
       <div className="gap-y-8">
         <div className="flex  gap-8 items-center mt-4 pb-9">
-          <p className="text-xl font-bold" >new Role :</p>
+          <p className="text-xl font-bold">new Role :</p>
           <input
             className="bg-gray-50 border border-gray-300 w-1/6 p-2 rounded"
             value={newRole}
@@ -174,75 +171,75 @@ const Page = () => {
           </button>
         </div>
         <div className="max-2xl:h-80 h-[50vh]">
-        <table className="w-full rounded overflow-hidden table-fixed ">
-          <thead>
-            <tr className="bg-gray-800">
-              <th className="border border-gray-300 px-6 py-3">Role Name</th>
-              {pages.map((page) => (
-                <th key={page} className="border border-gray-300 px-1 py-3">
-                  {page}
-                </th>
-              ))}
-              <th className="border border-gray-300 px-6 py-3">Action</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {roles.map((role, index) => (
-              <tr key={index}>
-                <td className="border border-gray-300 px-4 py-2">
-                  {role.name}
-                </td>
+          <table className="rounded overflow-hidden table-fixed w-[100%] ">
+            <thead>
+              <tr className="bg-gray-800">
+                <th className="border border-gray-300 p-3">Role Name</th>
                 {pages.map((page) => (
-                  <td
-                    key={page}
-                    className="border border-gray-300 px-4 py-2 text-center"
-                  >
-                    <div className="flex items-center justify-center">
-                      {updatingRole === `${role.name}-${page}` ? (
+                  <th key={page} className="border border-gray-300 px-3">
+                    {page}
+                  </th>
+                ))}
+                <th className="border border-gray-300 p-3">Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {roles.map((role, index) => (
+                <tr key={index}>
+                  <td className="border border-gray-300 px-4 py-2">
+                    {role.name}
+                  </td>
+                  {pages.map((page) => (
+                    <td
+                      key={page}
+                      className="border border-gray-300 px-4 py-2 text-center"
+                    >
+                      <div className="flex items-center justify-center">
+                        {updatingRole === `${role.name}-${page}` ? (
+                          <div className="animate-spin h-5 w-5 border-2 border-gray-300 border-t-blue-500 rounded-full"></div>
+                        ) : (
+                          <input
+                            type="checkbox"
+                            checked={role.access[page] || false}
+                            onChange={(e) =>
+                              handleAccessUpdate(
+                                role.name,
+                                page,
+                                e.target.checked
+                              )
+                            }
+                            className="w-6 h-6"
+                          />
+                        )}
+                      </div>
+                    </td>
+                  ))}
+                  <td className="border flex justify-center border-gray-300 px-4 py-2">
+                    <button
+                      onClick={() => handleDeleteClick(role)}
+                      className="bg-gray-800 text-white pl-3 w-10 h-10 hover:bg-gray-600 rounded-md"
+                      disabled={updatingRole === role._id}
+                    >
+                      {updatingRole === role._id ? (
                         <div className="animate-spin h-5 w-5 border-2 border-gray-300 border-t-blue-500 rounded-full"></div>
                       ) : (
-                        <input
-                          type="checkbox"
-                          checked={role.access[page] || false}
-                          onChange={(e) =>
-                            handleAccessUpdate(
-                              role.name,
-                              page,
-                              e.target.checked
-                            )
-                          }
-                          className="w-6 h-6"
-                        />
+                        <FaTrashAlt className="" />
                       )}
-                    </div>
-                  </td>
-                ))}
-                <td className="border flex justify-center border-gray-300 px-4 py-2">
-                  <button
-                    onClick={() => handleDeleteClick(role)}
-                    className="bg-gray-800 text-white pl-3 w-10 h-10 hover:bg-gray-600 rounded-md"
-                    disabled={updatingRole === role._id}
-                  >
-                    {updatingRole === role._id ? (
-                      <div className="animate-spin h-5 w-5 border-2 border-gray-300 border-t-blue-500 rounded-full"></div>
-                    ) : (
-                      <FaTrashAlt className="" />
+                    </button>
+                    {isPopupOpen && (
+                      <DeletePopup
+                        handleClosePopup={handleClosePopup}
+                        Delete={Deleterole}
+                        id={selectedRole.id} // Pass selected user's id
+                        name={selectedRole.name}
+                      />
                     )}
-                  </button>
-                  {isPopupOpen && (
-                    <DeletePopup
-                      handleClosePopup={handleClosePopup}
-                      Delete={Deleterole}
-                      id={selectedRole.id} // Pass selected user's id
-                      name={selectedRole.name}
-                    />
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
       <div className="flex justify-center mt-4">

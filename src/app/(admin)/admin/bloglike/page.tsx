@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import Pagination from "@/components/Pagination";
 import Image from "next/image";
 import Link from "next/link";
+import { FaSpinner } from "react-icons/fa6";
 
 
 interface Postsecondsubsection {
@@ -56,8 +57,8 @@ interface User {
 }
 const BlogLikes = () => {
   const [postlist, setPostlist] = useState<blog[]>([]);
+  const [loading, setLoading] = useState(true);
 
- 
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
 
@@ -91,13 +92,16 @@ const BlogLikes = () => {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
+        
         setPostlist(data); // Assuming data is an array of products
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
     };
 
     fetchProducts();
+    
   }, []);
 
   return (
@@ -123,6 +127,27 @@ const BlogLikes = () => {
             <th className="px-4 py-3 text-center">Action</th>
           </tr>
         </thead>
+        {loading ? (
+          <tbody>
+            <tr>
+              <td colSpan={5}>
+                <div className="flex justify-center items-center h-full w-full py-6">
+                  <FaSpinner className="animate-spin text-[30px]" />
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        ) : filteredBlogs.length === 0 ? (
+          <tbody>
+            <tr>
+              <td colSpan={5}>
+                <div className="text-center py-6 text-gray-600 w-full">
+                  <p>Aucun blog trouvé.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        ) : (
         <tbody>
           {currentBlogs.map((blog) => (
             <tr key={blog._id} className="bg-white text-black">
@@ -158,7 +183,7 @@ const BlogLikes = () => {
               </td>
             </tr>
           ))}
-        </tbody>
+        </tbody>)}
       </table></div>
       <div className="flex justify-center mt-4">
         <Pagination
