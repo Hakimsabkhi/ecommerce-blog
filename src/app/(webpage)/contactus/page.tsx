@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'; // Ensure the page is dynamically rendered
+
 import Contactusbanner from '@/components/contactusbanner';
 import Milanotorino from '@/components/milanotorino';
 import React from 'react';
@@ -10,33 +12,25 @@ async function fetchCompanyData() {
       headers: {
         'Content-Type': 'application/json',
       },
-      next: { revalidate: 0 }, // Disable caching for this request
+      cache: 'no-store', 
+      next: { revalidate: 0 },// Fetch fresh data on every request
     });
 
     if (!res.ok) {
-      console.error(`Failed to fetch data: ${res.status} ${res.statusText}`);
+      console.error(`API Error: ${res.status} - ${res.statusText}`);
       return null; // Return null if the request fails
     }
 
-    return await res.json(); // Parse and return the JSON data
+    const data = await res.json();
+    return data; // Parse and return the JSON data
   } catch (error) {
-    console.error('Error fetching company data:', error);
+    console.error('Unexpected Error Fetching Company Data:', error);
     return null; // Handle unexpected errors
   }
 }
 
 const Page = async () => {
   const companyData = await fetchCompanyData();
-
-  // Handle cases where companyData is null
-  if (!companyData) {
-    return (
-      <div>
-        <h1>Error Loading Data</h1>
-        <p>Unable to fetch company data. Please try again later.</p>
-      </div>
-    );
-  }
 
   return (
     <div>
