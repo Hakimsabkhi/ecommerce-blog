@@ -1,6 +1,5 @@
 import Blog from '@/components/fPost/Post';
 import Blogbanner from '@/components/blogbanner';
-import React from 'react';
 
 async function getBlogs() {
   try {
@@ -9,19 +8,18 @@ async function getBlogs() {
       headers: {
         "Content-Type": "application/json",
       },
-      cache: 'no-store', // Avoid caching if fresh data is required
+      cache: "no-store", // Ensure fresh data is fetched each time
+      next: { revalidate: 10 },
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error("API Error Response:", errorText);
       throw new Error(`Failed to fetch blogs: ${response.status} ${response.statusText}`);
     }
 
     return await response.json();
   } catch (error) {
     console.error("Error in getBlogs:", error);
-    return []; // Return an empty array as a fallback
+    return []; // Return an empty array if the fetch fails
   }
 }
 
