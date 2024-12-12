@@ -14,7 +14,7 @@ interface blog {
   
   async function getBlogs() {
     try {
-      const response = await fetch(`${process.env.NEXTAUTH_URL}/api/blog/listpostcustomer`, {
+      const response = await fetch('/api/blog/listpostcustomer', {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
