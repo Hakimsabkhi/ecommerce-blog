@@ -4,6 +4,9 @@ import connectToDatabase from '@/lib/db';
 import Category from '@/models/Category';
 import User from '@/models/User';
 import { getToken } from 'next-auth/jwt';
+
+export const dynamic = 'force-dynamic';
+
 async function getUserFromToken(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   if (!token) {

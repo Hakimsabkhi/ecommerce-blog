@@ -5,7 +5,7 @@ import User from '@/models/User';
 import Address from '@/models/Address';
 import { getToken } from 'next-auth/jwt';
 
-
+export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest ) {
  

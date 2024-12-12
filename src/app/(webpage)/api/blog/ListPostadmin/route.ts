@@ -5,6 +5,8 @@ import { getToken } from 'next-auth/jwt';
 import User from '@/models/User';
 import BlogCategory from '@/models/PostSections/BlogCategory';
 
+export const dynamic = 'force-dynamic';
+
 async function getUserFromToken(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   if (!token) {

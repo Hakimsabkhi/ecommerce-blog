@@ -4,6 +4,8 @@ import Address from '@/models/Address';
 import User from '@/models/User';
 import { getToken } from 'next-auth/jwt';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
   try {
     await connectToDatabase(); // Ensure the database connection is established
@@ -18,7 +20,7 @@ export async function GET(req: NextRequest) {
     const address = await Address.find({ user }).sort({ createdAt: -1 });
     return NextResponse.json(address, { status: 200 });
   } catch (error) {
-    console.error('Error fetching categories:', error);
+    console.error('Error fetching address:', error);
     return NextResponse.json({ error: 'Error fetching data' }, { status: 500 });
   }
 }
