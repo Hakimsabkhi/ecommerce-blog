@@ -9,7 +9,6 @@ async function getBlogs() {
         "Content-Type": "application/json",
       },
       cache: "no-cache", // Use no-cache to allow dynamic fetch in a server component
-      next: { revalidate: 0 }, // Ensures the data is always fetched fresh
     });
 
     if (!response.ok) {

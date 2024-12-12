@@ -1,119 +1,98 @@
-"use client";
+'use client';
 
-import React, { useEffect, useMemo } from 'react';
-import Pagination from '../Pagination';
-import { Dispatch } from '@reduxjs/toolkit';
+import React from "react";
 
+interface Notification {
+  _id: string;
+  order: {
+    _id: string;
+    user: {
+      username: string;
+    };
+    ref: string;
+  };
+  look: string; // To check if the notification is read
+  createdAt: string;
+  updatedAt: string; // Added to match the required type
+}
 
 interface ListNotificationProps {
-    data: any[];
-    isListVisible: boolean;
-    hendlafficheorder(item:any):void;
-    currentPage:number;
-    setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+  data: Notification[];
+  isListVisible: boolean;
+  handleViewOrder: (item: Notification) => Promise<void>;
+  currentPage: number;
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+}
 
-  }
+const ListNotification: React.FC<ListNotificationProps> = ({
+  data,
+  isListVisible,
+  handleViewOrder,
+  currentPage,
+  setCurrentPage,
+}) => {
+  // Pagination logic
+  const notificationsPerPage = 5;
+  const startIndex = (currentPage - 1) * notificationsPerPage;
+  const endIndex = startIndex + notificationsPerPage;
+  const visibleNotifications = data.slice(startIndex, endIndex);
 
+  if (!isListVisible) return null;
 
   const timeAgo = (date: string): string => {
     const now = new Date();
-    const commentDate = new Date(date);
-    const diffInSeconds = Math.floor((now.getTime() - commentDate.getTime()) / 1000);
-  
+    const notificationDate = new Date(date);
+    const diffInSeconds = Math.floor((now.getTime() - notificationDate.getTime()) / 1000);
+
     const minutes = Math.floor(diffInSeconds / 60);
     const hours = Math.floor(diffInSeconds / 3600);
     const days = Math.floor(diffInSeconds / 86400);
     const weeks = Math.floor(diffInSeconds / 604800);
-  
-    if (weeks > 0) {
-      return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
-    } else if (days > 0) {
-      return `${days} day${days > 1 ? 's' : ''} ago`;
-    } else if (hours > 0) {
-      return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-    } else if (minutes > 0) {
-      return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-    } else {
-      return 'Just now';
-    }
+
+    if (weeks > 0) return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
+    if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
+    if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+    return 'Just now';
   };
 
-
-
-  const ListNotification: React.FC<ListNotificationProps> = ({
-    data,
-    currentPage,
-    setCurrentPage,
-    isListVisible,
-    hendlafficheorder,
-  }) => {
-    const dataPerPage = 4;
-  const totalPages = useMemo(() => Math.ceil(data.length / dataPerPage), [data.length]);
-
-  const paginateddata = useMemo(() => {
-    return data.slice((currentPage - 1) * dataPerPage, currentPage * dataPerPage);
-  }, [data, currentPage, dataPerPage]);
-
-  // Ensure that the current page is within bounds when data change
-  useEffect(() => {
-   
-      setCurrentPage(totalPages);
-
-  }, [currentPage, totalPages]);
-
-  if (data.length === 0) {
-    return null;
-  }
-
- 
-    return (
-        <div>
-      
-          
-            {/* Render the wishlist items based on visibility */}
-            {isListVisible && (
-  <div  className="absolute flex flex-col mt-6 w-[400px] max-md:w-[350px] max-h-64 overflow-y-auto
-                               border-[#15335D] border-4 rounded-lg bg-white z-30 right-52">
-    {data.length > 0 ? (
-      <div>
-        <h1 className="text-lg font-bold text-black border-b-2 text-center py-2 max-md:text-sm">
-          New order
-        </h1>
-        <div className="py-2 text-gray-500 border-b-2">
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
-        />
-      </div>
-        {paginateddata.map((item: any) => (
-          <div key={item._id} className="py-2 max-md:mx-[10%] border-b-2">
-            <div
-            
-             onClick={()=>hendlafficheorder(item)}
-              className="flex justify-around items-center text-gray-700"
-            >
-             
-              <span>{item.order.ref}</span>
-              <span className='flex flex-col'>
-               
-                <span className='text-sm'> {item.order.user.username}</span>
-                <span className='text-[10px] flex justify-end'>{timeAgo(item.order.createdAt)}</span>
-                
-              </span>
-
-            </div>
+  return (
+    <div className="absolute top-12 right-0 bg-white border rounded-md shadow-lg w-80 p-4">
+      <h3 className="text-lg font-semibold mb-2">Notifications</h3>
+      {visibleNotifications.length > 0 ? (
+        visibleNotifications.map((notification) => (
+          <div
+            key={notification._id}
+            className={`p-2 border-b cursor-pointer hover:bg-gray-100 ${
+              notification.look === 'false' ? 'bg-gray-200' : ''
+            }`}
+            onClick={() => handleViewOrder(notification)}
+          >
+            <p className="text-sm">{`Order by ${notification.order.user.username}`}</p>
+            <p className="text-xs text-gray-500">{timeAgo(notification.createdAt)}</p>
           </div>
-        ))}
+        ))
+      ) : (
+        <p className="text-sm text-gray-500">No notifications</p>
+      )}
+      <div className="flex justify-between items-center mt-2">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          className="text-sm text-blue-500 disabled:text-gray-400"
+        >
+          Previous
+        </button>
+        <button
+          disabled={endIndex >= data.length}
+          onClick={() => setCurrentPage((prev) => prev + 1)}
+          className="text-sm text-blue-500 disabled:text-gray-400"
+        >
+          Next
+        </button>
       </div>
-    ) : (
-      <p className="text-center py-2">No orders New .</p> // Always show this message
-    )}
-  </div>
-)}
-
-        </div>
-    );
+    </div>
+  );
 };
 
 export default ListNotification;
