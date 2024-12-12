@@ -2,21 +2,31 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
 import Company from '@/models/Company';
 
-
-
-
 export async function GET(req: NextRequest) {
   try {
-    await connectToDatabase(); // Ensure the database connection is established
+    // Ensure the database connection is established
+    await connectToDatabase();
 
-    // Fetch all categories but only return the name and imageUrl fields
-    const company = await Company.findOne({}).exec(); // Only select the 'name' and 'imageUrl' fields
+    // Fetch the company data
+    const company = await Company.findOne({}).exec();
 
-    // Return the fetched category names and image URLs
+    if (!company) {
+      // Handle case where no company data is found
+      return NextResponse.json(
+        { message: 'No company data found' },
+        { status: 404 }
+      );
+    }
+
+    // Return the fetched company data
     return NextResponse.json(company, { status: 200 });
   } catch (error) {
-    console.error('Error fetching Company:', error);
-    return NextResponse.json({ error: 'Error fetching data' }, { status: 500 });
+    console.error('Error fetching company data:', error);
+
+    // Return a 500 status code with an error message
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
-  
