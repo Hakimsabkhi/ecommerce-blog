@@ -1,4 +1,3 @@
-export const dynamic = 'force-dynamic'; 
 import { NextRequest, NextResponse } from "next/server"; // Use the new Next.js 13 API route types
 import dbConnect from "@/lib/db";
 import Product from "@/models/Product";

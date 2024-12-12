@@ -1,6 +1,3 @@
-
-export const dynamic = 'force-dynamic';  // Ensures dynamic rendering
-
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
 import Category from '@/models/Category';
