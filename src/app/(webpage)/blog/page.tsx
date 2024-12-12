@@ -8,8 +8,8 @@ async function getBlogs() {
       headers: {
         "Content-Type": "application/json",
       },
-      cache: "no-store", // Ensure fresh data is fetched each time
-      next: { revalidate: 10 },
+      cache: "no-cache", // Use no-cache to allow dynamic fetch in a server component
+      next: { revalidate: 0 }, // Ensures the data is always fetched fresh
     });
 
     if (!response.ok) {
@@ -19,7 +19,7 @@ async function getBlogs() {
     return await response.json();
   } catch (error) {
     console.error("Error in getBlogs:", error);
-    return []; // Return an empty array if the fetch fails
+    return []; // Return an empty array on error
   }
 }
 

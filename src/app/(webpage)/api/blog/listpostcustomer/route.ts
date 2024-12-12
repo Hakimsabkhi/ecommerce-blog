@@ -4,6 +4,7 @@ import PostMainSection from '@/models/PostSections/PostMainSectionModel';
 import User from '@/models/User';
 import BlogCategory from '@/models/PostSections/BlogCategory';
 
+export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
     try {
