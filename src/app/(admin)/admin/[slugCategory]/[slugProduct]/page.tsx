@@ -2,32 +2,33 @@ import React from "react";
 import { notFound } from "next/navigation";
 import FirstBlock from "@/components/Products/SingleProduct/FirstBlock";
 import SecondBlock from "@/components/Products/SingleProduct/SecondBlock";
-
+import { Metadata } from "next";
 
 interface ProductData {
   _id: string;
   name: string;
   description: string;
-  info:string;
+  info: string;
   ref: string;
   price: number;
   imageUrl?: string;
-  images?: string [];
-  brand?: Brand; // Make brand optional
+  images?: string[];
+  brand?: Brand;
   stock: number;
-  category:category;
-  dimensions?:string;
+  category: Category;
+  dimensions?: string;
   discount?: number;
-  warranty?:number;
-  weight?:number;
+  warranty?: number;
+  weight?: number;
   color?: string;
   material?: string;
   status?: string;
 }
-interface category{
-  _id:string;
-  name:string;
-  slug:string;
+
+interface Category {
+  _id: string;
+  name: string;
+  slug: string;
 }
 
 interface Brand {
@@ -37,55 +38,66 @@ interface Brand {
   imageUrl: string;
 }
 
-interface User {
-  username: string;
-}
-
 interface PageProps {
-  product: ProductData ;
+  params: {
+    slugCategory: string;
+    slugProduct: string;
+  };
 }
 
-// Fetch product data on the server
- async function getProduct(id: string): Promise<ProductData> {
-  const res = await fetch(
-    `${process.env.NEXTAUTH_URL}api/products/fgetProductByIdadmin/${id}`
-    , {
-      method: 'GET',
-      headers: {
-        "Content-Type": "application/json",
-      },
-     
-      next: { revalidate: 0 }, // Disable caching to always fetch the latest data
-    })
-  if (!res.ok) {
-    console.log("Product not found");
-    notFound();
+// Fetch product data
+async function getProduct(id: string): Promise<ProductData | null> {
+  try {
+    const res = await fetch(
+      `${process.env.NEXTAUTH_URL}/api/products/fgetProductByIdadmin/${id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        next: { revalidate: 0 }, // Disable caching
+      }
+    );
+
+    if (!res.ok) {
+      console.error("Product not found");
+      return null;
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error("Error fetching product data:", error);
+    return null;
   }
-  const data: ProductData = await res.json();
-  return data;
 }
 
+// Metadata function
+export const generateMetadata = async ({
+  params,
+}: PageProps): Promise<Metadata> => {
+  const { slugCategory, slugProduct } = params;
 
-// Fetch the product data during server-side rendering
-export default async function Page({ params }: { params: {slugCategory: string ,slugProduct:string} }) {
-  
-  const product = await getProduct(params.slugProduct);
+  return {
+    title: `Product: ${slugProduct} - Category: ${slugCategory}`,
+    description: `Explore ${slugProduct} under the ${slugCategory} category.`,
+  };
+};
 
-  if (params.slugCategory != product.category.slug){
+// Page component
+export default async function Page({ params }: PageProps) {
+  const { slugCategory, slugProduct } = params;
+
+  const product = await getProduct(slugProduct);
+
+  // Return 404 if product is not found or category doesn't match
+  if (!product || slugCategory !== product.category.slug) {
     notFound();
-  }
-  if (!product) {
-    notFound(); // Redirects to a 404 page if the product is not found
   }
 
   return (
     <div>
-
       <FirstBlock product={product} />
       <SecondBlock product={product} />
-
-      
     </div>
   );
-};
-
+}

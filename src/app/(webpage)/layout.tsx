@@ -9,11 +9,7 @@ import Header from "@/components/menu/Header";
 // Load the Google font
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "700"] });
 
-// Define metadata for the page
-export const metadata = {
-  title: "Your Website Title",
-  description: "Your website description",
-};
+
 
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   return (

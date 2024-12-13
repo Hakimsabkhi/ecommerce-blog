@@ -1,37 +1,56 @@
-import { NextRequest, NextResponse } from "next/server"; // Use the new Next.js 13 API route types
-import dbConnect from "@/lib/db";
+import { NextRequest, NextResponse } from "next/server"; // Use Next.js 13 route handler types
+import dbConnect from "@/lib/db"; // Database connection utility
 import Product from "@/models/Product";
-import Category from "@/models/Category";
-import Brand from "@/models/Brand";
 
-// Handler for GET requests
 export async function GET(
-    req: NextRequest,
-    { params }: { params: { id: string } }
-  ) {
-    try {
-      await dbConnect();
-      const { id } = params; // Get `id` from params
-      
-      if (!id ) { // assuming the MongoDB ObjectId format is 24 characters
-        return new NextResponse(JSON.stringify({ message: "Invalid or missing product " }), { status: 400 });
-      }
-     
-     
-      await Category.find();
-      await Brand.find();
-      const product = await Product.findOne({ slug: id,vadmin:"not-approve" })
-        .populate("category")
-        .populate("brand").exec();
-  
-      if (!product) {
-        return new NextResponse(JSON.stringify({ message: "Product not found" }), { status: 404});
-      }
-  
-      return new NextResponse(JSON.stringify(product), { status: 200 });
-  
-    } catch (error) {
-      console.error("Error fetching product:", error);
-      return new NextResponse(JSON.stringify({ message: "Error fetching product" }), { status: 500 });
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    // Connect to the database
+    await dbConnect();
+
+    const { id } = params;
+
+    // Validate the `id`
+    if (!id || typeof id !== "string") {
+      return NextResponse.json(
+        { message: "Invalid or missing product ID" },
+        { status: 400 }
+      );
     }
+
+    // Fetch the product by `slug`
+    const product = await Product.findOne({ slug: id, vadmin: "not-approve" })
+      .populate("category")
+      .populate("brand")
+      .exec();
+
+    // If the product does not exist
+    if (!product) {
+      return NextResponse.json(
+        { message: "Product not found" },
+        { status: 404 }
+      );
+    }
+
+    // Return the product data
+    return NextResponse.json(product, { status: 200 });
+  } catch (error) {
+    console.error("Error fetching product:", error);
+
+    // Handle `error` safely
+    if (error instanceof Error) {
+      return NextResponse.json(
+        { message: "Internal server error", details: error.message },
+        { status: 500 }
+      );
+    }
+
+    // Fallback for unknown error types
+    return NextResponse.json(
+      { message: "An unknown error occurred" },
+      { status: 500 }
+    );
   }
+}

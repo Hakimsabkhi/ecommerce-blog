@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { AiOutlineBell } from "react-icons/ai";
 import ListNotification from "./listNotification";
 import { useRouter } from "next/navigation";
@@ -18,7 +18,7 @@ interface Order {
 interface Notification {
   _id: string;
   order: Order;
-  look: string; // Updated to reflect your API field
+  look: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -31,48 +31,52 @@ const Notification: React.FC = () => {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     try {
-      const response = await fetch('/api/notification/getnotification');
-      if (!response.ok) {
-        throw new Error('Failed to fetch notifications');
-      }
-      const data: Notification[] = await response.json();
-      const unreadCount = data.filter(notification => notification.look === 'false').length;
+      const response = await fetch(`/api/notification/getnotification?page=${currentPage}&limit=10`);
+      if (!response.ok) throw new Error("Failed to fetch notifications");
+
+      const { notifications } = await response.json();
+      if (!Array.isArray(notifications)) throw new Error("Invalid data format from API");
+
+      const unreadCount = notifications.filter((notification) => notification.look === "false").length;
+
       setNotif(unreadCount);
-      setNotifs(data);
+      setNotifs(notifications);
     } catch (err) {
-      console.error('Error fetching notifications:', err);
+      console.error("Error fetching notifications:", err);
     }
-  };
+  }, [currentPage]);
 
   const handleViewOrder = async (item: Notification) => {
     try {
       const response = await fetch(`/api/notification/updatenotification/${item._id}`, {
-        method: 'PUT',
+        method: "PUT",
       });
       if (response.ok) {
         router.push(`/admin/orderlist/${item.order.ref}`);
         setListVisible(false);
         fetchNotifications();
       } else {
-        console.error('Error updating notification');
+        console.error("Error updating notification");
       }
     } catch (err) {
-      console.error('Error handling order view:', err);
+      console.error("Error handling order view:", err);
     }
   };
 
   const toggleListVisibility = async () => {
-    setListVisible(prev => !prev);
-    try {
-      await fetch('/api/notification/updatenotifications/', {
-        method: 'PUT',
-        body: JSON.stringify(notifs),
-      });
-      fetchNotifications();
-    } catch (err) {
-      console.error('Error toggling list visibility:', err);
+    setListVisible((prev) => !prev);
+    if (!isListVisible) {
+      try {
+        await fetch("/api/notification/updatenotifications", {
+          method: "PUT",
+          body: JSON.stringify(notifs.map((n) => ({ _id: n._id }))),
+        });
+        fetchNotifications();
+      } catch (err) {
+        console.error("Error toggling list visibility:", err);
+      }
     }
   };
 
@@ -84,17 +88,14 @@ const Notification: React.FC = () => {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   useEffect(() => {
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 3000);
-
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchNotifications]);
 
   return (
     <div ref={listRef} className="flex items-center gap-2 text-white cursor-pointer select-none max-xl:hidden">
@@ -106,7 +107,7 @@ const Notification: React.FC = () => {
           </span>
         )}
       </div>
-      <ListNotification 
+      <ListNotification
         data={notifs}
         isListVisible={isListVisible}
         handleViewOrder={handleViewOrder}

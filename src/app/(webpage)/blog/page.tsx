@@ -2,27 +2,24 @@ import Blog from '@/components/fPost/Post';
 import Blogbanner from '@/components/blogbanner';
 
 async function getBlogs() {
-  try {
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/blog/listpostcustomer`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      cache: "no-cache", // Use no-cache to allow dynamic fetch in a server component
-    });
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/blog/listpostcustomer`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    next: { revalidate: 3600 }, // Revalidate every 1 hour
+  });
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch blogs: ${response.status} ${response.statusText}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error in getBlogs:", error);
-    return []; // Return an empty array on error
+  if (!response.ok) {
+    throw new Error(`Failed to fetch blogs: ${response.status} ${response.statusText}`);
   }
+
+  return response.json();
 }
 
-const Page = async () => {
+export const revalidate = 3600; // Page revalidates every 1 hour
+
+export default async function Page() {
   const blogs = await getBlogs();
 
   return (
@@ -35,6 +32,4 @@ const Page = async () => {
       )}
     </div>
   );
-};
-
-export default Page;
+}
